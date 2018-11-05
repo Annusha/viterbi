@@ -50,7 +50,7 @@ class Viterbi:
 
         self._probs = probs
         self._state = self._probs[0, 0]
-        self._number_frames = self._probs.shape[0] - 1
+        self._number_frames = self._probs.shape[0]
 
         # probabilities matrix
         self._T1 = np.zeros((len(self._grammar), self._number_frames)) + np.inf
@@ -86,12 +86,14 @@ class Viterbi:
         # last state
         self._grammar.set_framewise_state(None)
 
-        for i in range(self._T1.shape[1] - 1, -1, -1):
+        for i in range(self._T1.shape[1] - 1, 0, -1):
             self._grammar.set_framewise_state(self._T2[..., i])
         self._grammar.reverse()
 
     def loglikelyhood(self):
-        """Sum of loglikelihoods of the chosen path (cost)"""
+        """Sum of negative loglikelihoods of the chosen path (cost)
+        The less the better.
+        """
         return self._T1[-1, -1]
 
     def alignment(self):
